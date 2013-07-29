@@ -4,4 +4,24 @@
 # If you change this key, all old signed cookies will become invalid!
 # Make sure the secret is at least 30 characters and all random,
 # no regular words or you'll be exposed to dictionary attacks.
+#you can use 'rake secret' to generate a secure secret key.
+
+#Make sure your secret_key_base is kept private
+#if you're sharing your code publicly.
+
+require 'securerandom'
+
+def secure_token
+	token_file = Rails.root.join('.secret')
+	if File.exist?(token_file)
+		#Use the existing token.
+		File.read(token_file).chomp
+	else
+		#Generate a new token and store it in token_file.
+		token = SecureRandom.hex(64)
+		File.write(token,file, token)
+		token
+	end
+end
+
 SampleApp::Application.config.secret_token = '1650b65624828bd4f1e05018ea233865505d14e3af97a84d698436be8011125b2e452207246773d162b54e810e092004cfb255fee134833a41eb35305705fe12'

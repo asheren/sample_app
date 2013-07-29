@@ -1,65 +1,73 @@
 require 'spec_helper'
 
+describe ApplicationHelper do 
+
+	describe "full_title" do
+		it "should include the page title" do 
+			expect(full_title("foo")).to match(/foo/)
+		end
+
+		it "should include the base title" do
+			expect(full_title("foo")).to match(/^Ruby on Rails Tutorial Sample App/)
+		end
+
+		it "shoud not include a bar for the home page" do
+			expect(full_title(" ")).not_to match(/\|/)
+		end
+	end
+end
+
 describe "Static Pages" do
 
+	subject { page }
+
+	shared_examples_for "all static pages" do
+		it { should have_selector('h1', text: heading) }
+		it { should have_title(full_title(page_title)) }
+	end
+
   describe "Home page" do
+  	before { visit root_path }
+  	let(:heading) 		{ visit root_path }
+  	let(:page_title)  { '' }
 
-    it "should have the content 'Sample App' " do
-    	visit '/static_pages/home'
-    	expect(page). to have_content('Sample App')
-      # Run the generator again with the --webrat flag if you want to use webrat methods/matchers
-    end
-
-    it "should have the base title" do
-    	visit '/static_pages/home'
-    	expect(page).to have_title ("Ruby on Rails Tutorial Sample App")
- 			end
-
- 		it "should not have a custom page title" do
- 			visit '/static_pages/home'
- 			expect(page).not_to have_title('| Home')
- 		end
+    it_should_behave_like "all static pages"
+ 		it { should_not have_title('| Home') }
  	end
 
-describe "Help page" do
+	describe "Help page" do
+		before { visit help_path }
 
-		it "should have the h1 'Help' " do
-			visit '/static_pages/help'
-			page.should have_selector('h1', :text => 'Help')
-		end
-
-		it "should have the title 'Help' " do
-			visit '/static_pages/help'
-			page.should have_selector('title',
-													:text => "#{base_title} | Help")
-		end
+		it { should have_content('Help') }
+		it { should have_title(full_title('Help')) }
 	end
 
 	describe "About page" do
+		before { visit about_path }
 
-		it "should have the h1 'About us' " do
-			visit '/static_pages/about'
-			page.should have_selector('h1', :text => 'About Us')
+		it { should have_content('About') }
+		it { should have_title(full_title('About Us')) } 
+	end
+
+	describe "Contact page" do 
+		before { visit contact_path }
+
+		it { should have_selector('h1', text: 'Contact') }
+		it { should have_title(full_title('Contact')) } 
+	end
+
+		it "should have the right links on the layout" do
+			visit root_path
+			click_link "About"
+			expect(page).to have_title(full_title('About Us'))
+			click_link "Help"
+			expect(page).to have_title(full_title('Help'))
+			click_link "Contact"
+			expect(page).to have_title(full_title('Contact'))
+			click_link "Home"
+			click_link "Sign up now!"
+			expect(page).to have_title(full_title(''))
+			click_link "sample app"
+			expect(page).to have_title(full_title('Sample App'))
 		end
-
-		it "should have the title 'About Us' " do
-			visit '/static_pages/about'
-			page.should have_selector('title',
-													:text => "#{base_title} | About Us")
-		end
-	end
-
-describe "Contact page" do 
-
-	it "should have the h1 'Contact' " do
-		visit '/static_pages/contact'
-		page.should have_selector('h1', :text => 'Contact')
-	end
-
-	it "should have the title 'Contact' " do
-		visit '/static_pages/contact'
-		page.should have_selector('title',
-													:text => "#{base_title} | Contact")
-	end
-end
 end
