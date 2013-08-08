@@ -21,7 +21,9 @@ group :development, :test do
 	gem 'childprocess', '0.3.6'
 end
 
-
+group :development do
+	gem 'quiet_assets'
+end
 
 #end
 
